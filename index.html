@@ -142,15 +142,23 @@
             actualizarBarraProgreso();
         }
         function verificarRespuesta(boton, respuesta) {
-            let preguntaActual = preguntas[indice];
-            if (respuesta === preguntaActual.respuesta) {
-                boton.classList.add("correcta");
-                puntaje++;
-            } else {
-                boton.classList.add("incorrecta");
-            }
-            document.getElementById("siguiente").style.display = "block";
+        let preguntaActual = preguntas[indice];
+        let opciones = document.querySelectorAll(".opcion");
+        
+        if (respuesta === preguntaActual.respuesta) {
+            boton.classList.add("correcta");
+            puntaje++;
+        } else {
+            boton.classList.add("incorrecta");
+            opciones.forEach(opcion => {
+                if (opcion.innerText === preguntaActual.respuesta) {
+                    opcion.classList.add("correcta");
+                }
+            });
         }
+        
+        document.getElementById("siguiente").style.display = "block";
+    }
         function siguientePregunta() { indice++; (indice < preguntas.length) ? cargarPregunta() : mostrarResultado(); }
         function actualizarBarraProgreso() { document.getElementById("progress").style.width = ((indice) / preguntas.length) * 100 + "%"; }
         function mostrarResultado() {
