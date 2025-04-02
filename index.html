@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌊 Trivia del Día del Agua</title>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
         body {
             font-family: 'Poppins', sans-serif;
             text-align: center;
@@ -18,8 +16,8 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column;
         }
-
         .container {
             background: rgba(255, 255, 255, 0.95);
             color: #0077b6;
@@ -29,122 +27,78 @@
             border-radius: 15px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
-
-        .progress-bar {
+        #siguiente{
+            color: #ffffff;
+            background-color: #0077b6;
+        }
+        .progress-bar { 
             width: 100%;
-            height: 10px;
-            background: #d4f1f4;
-            border-radius: 5px;
-            margin: 10px 0;
+            height: 10px; 
+            background: #d4f1f4; 
+            border-radius: 5px; 
+            margin: 10px 0; 
             overflow: hidden;
         }
-
-        .progress {
-            height: 100%;
-            width: 0%;
-            background: #0077b6;
+        .progress { 
+            height: 100%; 
+            width: 0%; 
+            background: #0077b6; 
             transition: width 0.5s ease-in-out;
         }
-
-        #pregunta {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 15px;
+        .opcion, #siguiente, #reiniciar, #iniciarJuego { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 8px 0; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
         }
-
-        .opcion {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background: #90e0ef;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        .opcion:hover, #siguiente:hover, #reiniciar:hover, #iniciarJuego:hover {
+            transform: scale(1.05); 
         }
-
-        .opcion:hover {
-            background: #00b4d8;
-            transform: scale(1.05);
-            color: white;
+        .correcta { 
+            background: #28a745 !important; 
+            color: white !important; 
         }
-
-        .correcta {
-            background: #28a745 !important;
-            color: white !important;
+        .incorrecta { 
+            background: #dc3545 !important; 
+            color: white !important; 
         }
-
-        .incorrecta {
-            background: #dc3545 !important;
-            color: white !important;
+        #siguiente, #reiniciar { 
+            display: none; 
         }
-
-        #siguiente, #reiniciar {
-            display: none;
-            background: #0077b6;
-            color: white;
-            font-size: 16px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s ease;
+        #resultado, #ranking { 
+            margin-top: 15px; 
+            font-size: 18px; 
+            font-weight: 600; 
         }
-
-        #siguiente:hover, #reiniciar:hover {
-            background: #005f8a;
-            transform: scale(1.05);
+        input { 
+            width: 96%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 8px; 
+            border: 1px solid #0077b6; 
+            font-size: 16px; 
+            text-align: center;
         }
-
-        #resultado {
-            font-size: 18px;
-            font-weight: 600;
-            margin-top: 15px;
-        }
-        @media (max-width: 600px) {
-        body {
-            flex-direction: column;
-            padding: 10px;
-            height: auto;
-        }
-    
-        .container {
-            width: 95%;
-            padding: 15px;
-        }
-    
-        #pregunta {
-            font-size: 18px;
-        }
-    
-        .opcion {
-            font-size: 14px;
-            padding: 10px;
-        }
-    
-        #siguiente, #reiniciar {
-            font-size: 14px;
-            padding: 10px;
-        }
-    }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>💧 Trivia del Día del Agua 💧</h1>
-        <div class="progress-bar">
-            <div id="progress" class="progress"></div>
-        </div>
-        <div id="pregunta-container">
+        <input type="text" id="nombreJugador" placeholder="Tu nombre" maxlength="20">
+        <button id="iniciarJuego" onclick="iniciarTrivia()">🎮 Iniciar Trivia</button>
+        <div class="progress-bar"><div id="progress" class="progress"></div></div>
+        <div id="pregunta-container" style="display: none;">
             <p id="pregunta"></p>
             <div id="opciones"></div>
         </div>
         <button id="siguiente" onclick="siguientePregunta()">Siguiente</button>
         <p id="resultado"></p>
         <button id="reiniciar" onclick="reiniciarJuego()">🔄 Volver a jugar</button>
+        <div id="ranking"></div>
     </div>
 
     <script>
@@ -158,18 +112,25 @@
             { pregunta: "🌱 ¿Cuál es la principal fuente de agua potable?", opciones: ["Océanos", "Ríos y lagos", "Lluvia", "Hielo derretido"], respuesta: "Ríos y lagos" },
             { pregunta: "🔄 ¿Qué ciclo natural mantiene el agua en movimiento?", opciones: ["Ciclo del carbono", "Ciclo del nitrógeno", "Ciclo del agua", "Ciclo de la energía"], respuesta: "Ciclo del agua" },
             { pregunta: "💦 ¿Cómo se llama el proceso de cambio de estado de agua líquida a gas?", opciones: ["Condensación", "Evaporación", "Sublimación", "Precipitación"], respuesta: "Evaporación" },
-            { pregunta: "🌡️ ¿A qué temperatura hierve el agua?", opciones: ["50°C", "75°C", "100°C", "120°C"], respuesta: "100°C" }
+            { pregunta: "🏞️ ¿Cuál es el humedal más grande de Bogotá?", opciones: ["Tibanica", "Juan Amarillo", "La Conejera", "Jaboque"], respuesta: "Juan Amarillo" },
+            { pregunta: "🚰 ¿Cómo puedes reducir el consumo de agua en casa?", opciones: ["Lavando el carro con manguera", "Usando regadera de bajo consumo", "Dejando el grifo abierto", "Regando el jardín al mediodía"], respuesta: "Usando regadera de bajo consumo" },
+            { pregunta: "🌱 ¿Por qué son importantes los humedales de Bogotá?", opciones: ["No tienen importancia", "Regulan el clima y almacenan agua", "Solo son zonas de recreación", "Generan contaminación"], respuesta: "Regulan el clima y almacenan agua" },
+            { pregunta: "💦 ¿Cuántos humedales hay en Bogotá?", opciones: ["5", "10", "15", "20"], respuesta: "15" },
+            { pregunta: "🛁 ¿Cuál es la mejor forma de ahorrar agua en la ducha?", opciones: ["Ducharse por más de 10 minutos", "Cerrar el agua mientras te enjabonas", "Usar agua caliente constantemente", "Llenar la bañera"], respuesta: "Cerrar el agua mientras te enjabonas" },
+            { pregunta: "🌎 ¿Qué sucede si no protegemos los humedales?", opciones: ["Nada", "Pérdida de biodiversidad y aumento de inundaciones", "Más lluvias", "Se vuelven más grandes"], respuesta: "Pérdida de biodiversidad y aumento de inundaciones" },
         ];
-
-        let indice = 0;
-        let puntaje = 0;
-
+        let indice = 0, puntaje = 0;
+        function iniciarTrivia() {
+            document.getElementById("nombreJugador").style.display = "none";
+            document.getElementById("iniciarJuego").style.display = "none";
+            document.getElementById("pregunta-container").style.display = "block";
+            cargarPregunta();
+        }
         function cargarPregunta() {
             let preguntaActual = preguntas[indice];
             document.getElementById("pregunta").innerText = preguntaActual.pregunta;
             let opcionesContainer = document.getElementById("opciones");
             opcionesContainer.innerHTML = "";
-
             preguntaActual.opciones.forEach(opcion => {
                 let boton = document.createElement("button");
                 boton.innerText = opcion;
@@ -177,56 +138,51 @@
                 boton.onclick = () => verificarRespuesta(boton, opcion);
                 opcionesContainer.appendChild(boton);
             });
-
             document.getElementById("siguiente").style.display = "none";
             actualizarBarraProgreso();
         }
-
         function verificarRespuesta(boton, respuesta) {
-            let correcta = preguntas[indice].respuesta;
-            if (respuesta === correcta) {
+            let preguntaActual = preguntas[indice];
+            if (respuesta === preguntaActual.respuesta) {
                 boton.classList.add("correcta");
                 puntaje++;
             } else {
                 boton.classList.add("incorrecta");
-                document.querySelectorAll(".opcion").forEach(btn => {
-                    if (btn.innerText === correcta) btn.classList.add("correcta");
-                });
             }
-            document.querySelectorAll(".opcion").forEach(btn => btn.disabled = true);
             document.getElementById("siguiente").style.display = "block";
         }
-
-        function siguientePregunta() {
-            indice++;
-            if (indice < preguntas.length) {
-                cargarPregunta();
-            } else {
-                mostrarResultado();
-            }
-        }
-
-        function actualizarBarraProgreso() {
-            document.getElementById("progress").style.width = ((indice) / preguntas.length) * 100 + "%";
-        }
-
+        function siguientePregunta() { indice++; (indice < preguntas.length) ? cargarPregunta() : mostrarResultado(); }
+        function actualizarBarraProgreso() { document.getElementById("progress").style.width = ((indice) / preguntas.length) * 100 + "%"; }
         function mostrarResultado() {
             document.getElementById("pregunta-container").style.display = "none";
             document.getElementById("siguiente").style.display = "none";
-            document.getElementById("resultado").innerText = `🏆 ¡Puntaje final: ${puntaje}/${preguntas.length}!`;
+            let nombre = document.getElementById("nombreJugador").value.trim() || "Anónimo";
+            document.getElementById("resultado").innerText = `🏆 ${nombre}, tu puntaje es: ${puntaje}/${preguntas.length}`;
             document.getElementById("reiniciar").style.display = "block";
+            guardarPuntaje(nombre, puntaje);
+            mostrarPuntajes();
         }
-
         function reiniciarJuego() {
             indice = 0;
             puntaje = 0;
-            document.getElementById("pregunta-container").style.display = "block";
             document.getElementById("resultado").innerText = "";
             document.getElementById("reiniciar").style.display = "none";
-            cargarPregunta();
+            iniciarTrivia();
         }
-
-        cargarPregunta();
+        function guardarPuntaje(nombre, puntaje) {
+            let puntajes = JSON.parse(localStorage.getItem("puntajes")) || [];
+            puntajes.push({ nombre, puntaje });
+            localStorage.setItem("puntajes", JSON.stringify(puntajes));
+        }
+        function mostrarPuntajes() {
+            let puntajes = JSON.parse(localStorage.getItem("puntajes")) || [];
+            let tabla = "<h2>🏅 Puntajes Anteriores</h2><ul>";
+            puntajes.sort((a, b) => b.puntaje - a.puntaje);
+            puntajes.slice(0, 5).forEach(p => { tabla += `<li>${p.nombre}: ${p.puntaje} pts</li>`; });
+            tabla += "</ul>";
+            document.getElementById("ranking").innerHTML = tabla;
+        }
+        mostrarPuntajes();
     </script>
 </body>
 </html>
